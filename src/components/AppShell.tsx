@@ -1,13 +1,14 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Radio, LogOut } from "lucide-react";
+import { Radio, LogOut, Settings } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { GlobalSupport } from "@/components/GlobalSupport";
 import type { ReactNode } from "react";
 
-type Props = { children: ReactNode; canSeeResellers: boolean };
+type Props = { children: ReactNode; canSeeResellers: boolean; isMaster?: boolean };
 
-export function AppShell({ children, canSeeResellers }: Props) {
+export function AppShell({ children, canSeeResellers, isMaster = false }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -16,6 +17,7 @@ export function AppShell({ children, canSeeResellers }: Props) {
     { to: "/dashboard", label: "Dashboard" },
     { to: "/dispositivos", label: "Dispositivos" },
     ...(canSeeResellers ? [{ to: "/revendedores", label: "Revendedores" }] : []),
+    ...(isMaster ? [{ to: "/configuracoes", label: "Configurações" }] : []),
   ];
 
   async function signOut() {
@@ -51,6 +53,7 @@ export function AppShell({ children, canSeeResellers }: Props) {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
+                {tab.to === "/configuracoes" && <Settings className="mr-1.5 inline-block size-3.5" />}
                 {tab.label}
               </Link>
             ))}
@@ -65,6 +68,7 @@ export function AppShell({ children, canSeeResellers }: Props) {
         </div>
       </header>
 
+      <GlobalSupport />
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
     </div>
   );
