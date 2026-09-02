@@ -11,9 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/_authenticated/configuracoes")({
-  component: SettingsPage,
-});
+export const Route = createFileRoute("/_authenticated/configuracoes")({ component: SettingsPage });
 
 type Settings = {
   id: string;
@@ -23,8 +21,6 @@ type Settings = {
   global_notice_image_url: string;
   global_notice_active: boolean;
 };
-
-const TABLE = "system_settings" as never;
 
 function SettingsPage() {
   const { access, loading: accessLoading } = useAccess();
@@ -37,6 +33,7 @@ function SettingsPage() {
   const [savingSupport, setSavingSupport] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     if (!access?.isMaster) return;
@@ -44,7 +41,7 @@ function SettingsPage() {
   }, [access?.isMaster]);
 
   async function loadSettings() {
-    const { data, error } = await (supabase.from(TABLE).select("*").limit(1).maybeSingle() as any);
+    const { data, error } = await supabase.from("system_settings").select("*").limit(1).maybeSingle();
     if (error) {
       toast.error("Não foi possível carregar as configurações.");
       return;
@@ -63,10 +60,7 @@ function SettingsPage() {
     if (!settings) return;
     setSavingSupport(true);
     const cleanWhatsapp = whatsapp.replace(/\D/g, "");
-    const { error } = await (supabase
-      .from(TABLE)
-      .update({ support_whatsapp: cleanWhatsapp, support_message: message.trim() })
-      .eq("id", settings.id) as any);
+    const { error } = await supabase.from("system_settings").update({ support_whatsapp: cleanWhatsapp, support_message: message.trim() }).eq("id", settings.id);
     setSavingSupport(false);
     if (error) {
       toast.error("Erro ao salvar o suporte.");
@@ -88,11 +82,7 @@ function SettingsPage() {
     setUploading(true);
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const path = `global/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("notices").upload(path, file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: file.type,
-    });
+    const { error } = await supabase.storage.from("notices").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
     if (error) {
       setUploading(false);
       toast.error("Falha no upload da imagem.");
@@ -107,14 +97,7 @@ function SettingsPage() {
   async function publishNotice() {
     if (!settings) return;
     setPublishing(true);
-    const { error } = await (supabase
-      .from(TABLE)
-      .update({
-        global_notice_text: noticeText.trim(),
-        global_notice_image_url: noticeImageUrl,
-        global_notice_active: noticeActive,
-      })
-      .eq("id", settings.id) as any);
+    const { error } = await supabase.from("system_settings").update({ global_notice_text: noticeText.trim(), global_notice_image_url: noticeImageUrl, global_notice_active: noticeActive }).eq("id", settings.id);
     setPublishing(false);
     if (error) {
       toast.error("Erro ao publicar o aviso geral.");
@@ -124,9 +107,7 @@ function SettingsPage() {
   }
 
   if (accessLoading) return <div className="py-12 text-center text-muted-foreground">Carregando…</div>;
-  if (!access?.isMaster) {
-    return <div className="py-12 text-center text-sm text-muted-foreground">Acesso restrito ao Master Admin.</div>;
-  }
+  if (!access?.isMaster) return <div className="py-12 text-center text-sm text-muted-foreground">Acesso restrito ao Master Admin.</div>;
 
   return (
     <div className="space-y-6">
@@ -171,7 +152,12 @@ function SettingsPage() {
           </div>
           <div className="space-y-3">
             <Label>Imagem do Aviso</Label>
-            <label className="flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-muted/10 p-6 text-center transition hover:border-primary/60 hover:bg-muted/20">
+            <label
+              className={`flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-6 text-center transition ${dragging ? "border-primary bg-primary/10" : "border-border/80 bg-muted/10 hover:border-primary/60 hover:bg-muted/20"}`}
+              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={(e) => { e.preventDefault(); setDragging(false); const file = e.dataTransfer.files[0]; if (file) void uploadNoticeImage(file); }}
+            >
               <Upload className="size-7 text-muted-foreground" />
               <span className="text-sm font-medium">Arraste ou selecione uma imagem</span>
               <span className="text-xs text-muted-foreground">PNG, JPG, WEBP · máximo 5 MB</span>
