@@ -14,16 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      devices: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          mac: string
+          password: string
+          server_url: string
+          status: Database["public"]["Enums"]["device_status"]
+          updated_at: string
+          user_agent: string
+          user_id: string
+          username: string
+          validity_days: number
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          mac: string
+          password: string
+          server_url?: string
+          status?: Database["public"]["Enums"]["device_status"]
+          updated_at?: string
+          user_agent?: string
+          user_id: string
+          username: string
+          validity_days?: number
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          mac?: string
+          password?: string
+          server_url?: string
+          status?: Database["public"]["Enums"]["device_status"]
+          updated_at?: string
+          user_agent?: string
+          user_id?: string
+          username?: string
+          validity_days?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          can_create_resellers: boolean
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          is_blocked: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          can_create_resellers?: boolean
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id: string
+          is_blocked?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Update: {
+          can_create_resellers?: boolean
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          is_blocked?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_create_resellers: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_master: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "master" | "reseller"
+      device_status: "active" | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +257,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["master", "reseller"],
+      device_status: ["active", "inactive"],
+    },
   },
 } as const
