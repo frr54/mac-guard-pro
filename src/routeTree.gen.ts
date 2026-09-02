@@ -10,7 +10,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDispositivosRouteImport } from './routes/_authenticated/dispositivos'
 import { Route as AuthenticatedRevendedoresRouteImport } from './routes/_authenticated/revendedores'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as ApiPublicAuthRouteImport } from './routes/api/public/auth'
+import { Route as ApiPublicSettingsRouteImport } from './routes/api/public/settings'
 
 const IndexRoute = IndexRouteImport.update({ id: '/', path: '/', getParentRoute: () => rootRouteImport } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({ id: '/_authenticated', getParentRoute: () => rootRouteImport } as any)
@@ -18,7 +20,9 @@ const AuthRoute = AuthRouteImport.update({ id: '/auth', path: '/auth', getParent
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({ id: '/dashboard', path: '/dashboard', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const AuthenticatedDispositivosRoute = AuthenticatedDispositivosRouteImport.update({ id: '/dispositivos', path: '/dispositivos', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const AuthenticatedRevendedoresRoute = AuthenticatedRevendedoresRouteImport.update({ id: '/revendedores', path: '/revendedores', getParentRoute: () => AuthenticatedRouteRoute } as any)
+const AuthenticatedConfiguracoesRoute = AuthenticatedConfiguracoesRouteImport.update({ id: '/configuracoes', path: '/configuracoes', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const ApiPublicAuthRoute = ApiPublicAuthRouteImport.update({ id: '/api/public/auth', path: '/api/public/auth', getParentRoute: () => rootRouteImport } as any)
+const ApiPublicSettingsRoute = ApiPublicSettingsRouteImport.update({ id: '/api/public/settings', path: '/api/public/settings', getParentRoute: () => rootRouteImport } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -26,7 +30,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositivos': typeof AuthenticatedDispositivosRoute
   '/revendedores': typeof AuthenticatedRevendedoresRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
+  '/api/public/settings': typeof ApiPublicSettingsRoute
 }
 export interface FileRoutesByTo extends FileRoutesByFullPath {}
 export interface FileRoutesById {
@@ -37,7 +43,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/dispositivos': typeof AuthenticatedDispositivosRoute
   '/_authenticated/revendedores': typeof AuthenticatedRevendedoresRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
+  '/api/public/settings': typeof ApiPublicSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -52,6 +60,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicAuthRoute: typeof ApiPublicAuthRoute
+  ApiPublicSettingsRoute: typeof ApiPublicSettingsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -62,7 +71,9 @@ declare module '@tanstack/react-router' {
     '/_authenticated/dashboard': { id: '/_authenticated/dashboard'; path: '/dashboard'; fullPath: '/dashboard'; preLoaderRoute: typeof AuthenticatedDashboardRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/dispositivos': { id: '/_authenticated/dispositivos'; path: '/dispositivos'; fullPath: '/dispositivos'; preLoaderRoute: typeof AuthenticatedDispositivosRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/revendedores': { id: '/_authenticated/revendedores'; path: '/revendedores'; fullPath: '/revendedores'; preLoaderRoute: typeof AuthenticatedRevendedoresRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/configuracoes': { id: '/_authenticated/configuracoes'; path: '/configuracoes'; fullPath: '/configuracoes'; preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/api/public/auth': { id: '/api/public/auth'; path: '/api/public/auth'; fullPath: '/api/public/auth'; preLoaderRoute: typeof ApiPublicAuthRouteImport; parentRoute: typeof rootRouteImport }
+    '/api/public/settings': { id: '/api/public/settings'; path: '/api/public/settings'; fullPath: '/api/public/settings'; preLoaderRoute: typeof ApiPublicSettingsRouteImport; parentRoute: typeof rootRouteImport }
   }
 }
 
@@ -70,11 +81,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDispositivosRoute: typeof AuthenticatedDispositivosRoute
   AuthenticatedRevendedoresRoute: typeof AuthenticatedRevendedoresRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
 }
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute,
   AuthenticatedDispositivosRoute,
   AuthenticatedRevendedoresRoute,
+  AuthenticatedConfiguracoesRoute,
 }
 const AuthenticatedRouteRouteWithChildren = AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
@@ -83,6 +96,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute,
   ApiPublicAuthRoute,
+  ApiPublicSettingsRoute,
 }
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
 
