@@ -11,7 +11,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDispositivosRouteImport } from './routes/_authenticated/dispositivos'
 import { Route as AuthenticatedRevendedoresRouteImport } from './routes/_authenticated/revendedores'
 import { Route as ApiPublicAuthRouteImport } from './routes/api/public/auth'
-import { Route as ApiPublicMatchesRouteImport } from './routes/api/public/matches'
 
 const IndexRoute = IndexRouteImport.update({ id: '/', path: '/', getParentRoute: () => rootRouteImport } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({ id: '/_authenticated', getParentRoute: () => rootRouteImport } as any)
@@ -20,7 +19,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({ i
 const AuthenticatedDispositivosRoute = AuthenticatedDispositivosRouteImport.update({ id: '/dispositivos', path: '/dispositivos', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const AuthenticatedRevendedoresRoute = AuthenticatedRevendedoresRouteImport.update({ id: '/revendedores', path: '/revendedores', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const ApiPublicAuthRoute = ApiPublicAuthRouteImport.update({ id: '/api/public/auth', path: '/api/public/auth', getParentRoute: () => rootRouteImport } as any)
-const ApiPublicMatchesRoute = ApiPublicMatchesRouteImport.update({ id: '/api/public/matches', path: '/api/public/matches', getParentRoute: () => rootRouteImport } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -29,7 +27,6 @@ export interface FileRoutesByFullPath {
   '/dispositivos': typeof AuthenticatedDispositivosRoute
   '/revendedores': typeof AuthenticatedRevendedoresRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
-  '/api/public/matches': typeof ApiPublicMatchesRoute
 }
 export interface FileRoutesByTo extends FileRoutesByFullPath {}
 export interface FileRoutesById {
@@ -41,7 +38,6 @@ export interface FileRoutesById {
   '/_authenticated/dispositivos': typeof AuthenticatedDispositivosRoute
   '/_authenticated/revendedores': typeof AuthenticatedRevendedoresRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
-  '/api/public/matches': typeof ApiPublicMatchesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -56,7 +52,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicAuthRoute: typeof ApiPublicAuthRoute
-  ApiPublicMatchesRoute: typeof ApiPublicMatchesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,7 +63,6 @@ declare module '@tanstack/react-router' {
     '/_authenticated/dispositivos': { id: '/_authenticated/dispositivos'; path: '/dispositivos'; fullPath: '/dispositivos'; preLoaderRoute: typeof AuthenticatedDispositivosRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/revendedores': { id: '/_authenticated/revendedores'; path: '/revendedores'; fullPath: '/revendedores'; preLoaderRoute: typeof AuthenticatedRevendedoresRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/api/public/auth': { id: '/api/public/auth'; path: '/api/public/auth'; fullPath: '/api/public/auth'; preLoaderRoute: typeof ApiPublicAuthRouteImport; parentRoute: typeof rootRouteImport }
-    '/api/public/matches': { id: '/api/public/matches'; path: '/api/public/matches'; fullPath: '/api/public/matches'; preLoaderRoute: typeof ApiPublicMatchesRouteImport; parentRoute: typeof rootRouteImport }
   }
 }
 
@@ -89,7 +83,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute,
   ApiPublicAuthRoute,
-  ApiPublicMatchesRoute,
 }
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
 
