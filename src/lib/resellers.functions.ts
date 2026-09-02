@@ -65,10 +65,11 @@ export const updateReseller = createServerFn({ method: "POST" })
     if (!target) throw new Error("Revendedor não encontrado");
     if (!isMaster && target.created_by !== context.userId) throw new Error("Forbidden");
 
-    const patch: Record<string, boolean> = {};
+    const patch: { can_create_resellers?: boolean; is_blocked?: boolean } = {};
     if (data.canCreateResellers !== undefined)
-      patch['can_create_resellers'] = data.canCreateResellers;
-    if (data.isBlocked !== undefined) patch['is_blocked'] = data.isBlocked;
+      patch.can_create_resellers = data.canCreateResellers;
+    if (data.isBlocked !== undefined) patch.is_blocked = data.isBlocked;
+
 
     if (Object.keys(patch).length) {
       const { error } = await supabaseAdmin
