@@ -55,6 +55,20 @@ function SettingsPage() {
     setNoticeText(row.global_notice_text ?? "");
     setNoticeImageUrl(row.global_notice_image_url ?? "");
     setNoticeActive(!!row.global_notice_active);
+    await refreshPreview(row.global_notice_image_url ?? "");
+  }
+
+  async function refreshPreview(value: string) {
+    if (!value) {
+      setNoticePreview("");
+      return;
+    }
+    if (value.startsWith("http")) {
+      setNoticePreview(value);
+      return;
+    }
+    const { data } = await supabase.storage.from("notices").createSignedUrl(value, 3600);
+    setNoticePreview(data?.signedUrl ?? "");
   }
 
   async function saveSupport() {
