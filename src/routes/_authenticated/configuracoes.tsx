@@ -179,7 +179,7 @@ function SettingsPage() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && void uploadNoticeImage(e.target.files[0])} disabled={uploading} />
             </label>
             {uploading && <p className="text-xs text-muted-foreground">Enviando imagem…</p>}
-            {noticeImageUrl && (
+            {noticePreview && (
               <div className="relative overflow-hidden rounded-xl border border-border/70 bg-muted/20">
                 <img src={noticeImageUrl} alt="Prévia do aviso" className="max-h-72 w-full object-cover" />
                 <Button type="button" variant="secondary" size="icon" className="absolute right-2 top-2" onClick={() => setNoticeImageUrl("")}><X className="size-4" /></Button>
