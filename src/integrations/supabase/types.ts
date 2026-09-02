@@ -92,6 +92,39 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          created_at: string
+          global_notice_active: boolean
+          global_notice_image_url: string
+          global_notice_text: string
+          id: string
+          support_message: string
+          support_whatsapp: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          global_notice_active?: boolean
+          global_notice_image_url?: string
+          global_notice_text?: string
+          id?: string
+          support_message?: string
+          support_whatsapp?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          global_notice_active?: boolean
+          global_notice_image_url?: string
+          global_notice_text?: string
+          id?: string
+          support_message?: string
+          support_whatsapp?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
