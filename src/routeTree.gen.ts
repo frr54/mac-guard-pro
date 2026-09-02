@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDispositivosRouteImport } from './routes/_authenticated/dispositivos'
+import { Route as AuthenticatedRevendedoresRouteImport } from './routes/_authenticated/revendedores'
 import { Route as ApiPublicAuthRouteImport } from './routes/api/public/auth'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,12 @@ const AuthenticatedDispositivosRoute =
     path: '/dispositivos',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRevendedoresRoute =
+  AuthenticatedRevendedoresRouteImport.update({
+    id: '/revendedores',
+    path: '/revendedores',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicAuthRoute = ApiPublicAuthRouteImport.update({
   id: '/api/public/auth',
   path: '/api/public/auth',
@@ -52,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositivos': typeof AuthenticatedDispositivosRoute
+  '/revendedores': typeof AuthenticatedRevendedoresRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
 }
 export interface FileRoutesByTo {
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositivos': typeof AuthenticatedDispositivosRoute
+  '/revendedores': typeof AuthenticatedRevendedoresRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
 }
 export interface FileRoutesById {
@@ -68,13 +77,26 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/dispositivos': typeof AuthenticatedDispositivosRoute
+  '/_authenticated/revendedores': typeof AuthenticatedRevendedoresRoute
   '/api/public/auth': typeof ApiPublicAuthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/dispositivos' | '/api/public/auth'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/dispositivos'
+    | '/revendedores'
+    | '/api/public/auth'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/dispositivos' | '/api/public/auth'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/dispositivos'
+    | '/revendedores'
+    | '/api/public/auth'
   id:
     | '__root__'
     | '/'
@@ -82,6 +104,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/dispositivos'
+    | '/_authenticated/revendedores'
     | '/api/public/auth'
   fileRoutesById: FileRoutesById
 }
@@ -129,6 +152,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDispositivosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/revendedores': {
+      id: '/_authenticated/revendedores'
+      path: '/revendedores'
+      fullPath: '/revendedores'
+      preLoaderRoute: typeof AuthenticatedRevendedoresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/auth': {
       id: '/api/public/auth'
       path: '/api/public/auth'
@@ -142,11 +172,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDispositivosRoute: typeof AuthenticatedDispositivosRoute
+  AuthenticatedRevendedoresRoute: typeof AuthenticatedRevendedoresRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDispositivosRoute: AuthenticatedDispositivosRoute,
+  AuthenticatedRevendedoresRoute: AuthenticatedRevendedoresRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
