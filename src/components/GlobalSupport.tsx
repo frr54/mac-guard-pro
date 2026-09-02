@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 type PublicSettings = {
   support: { whatsapp: string; message: string };
@@ -13,14 +14,29 @@ export function GlobalSupport() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/public/settings", { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: PublicSettings | null) => {
-        if (!cancelled && data) setSettings(data);
-      })
-      .catch(() => undefined);
+    const load = async () => {
+      try {
+        const response = await fetch("/api/public/settings", { cache: "no-store" });
+        if (!response.ok) return;
+        const data = (await response.json()) as PublicSettings;
+        if (!cancelled) {
+          setSettings(data);
+          if (data.global_notice.active) setNoticeOpen(true);
+        }
+      } catch {
+        // Keep the panel usable if the public settings endpoint is temporarily unavailable.
+      }
+    };
+
+    void load();
+    const channel = supabase
+      .channel("global-system-settings")
+      .on("postgres_changes", { event: "*", schema: "public", table: "system_settings" }, () => void load())
+      .subscribe();
+
     return () => {
       cancelled = true;
+      void supabase.removeChannel(channel);
     };
   }, []);
 
@@ -31,8 +47,7 @@ export function GlobalSupport() {
 
   function openWhatsApp() {
     if (!supportNumber) return;
-    const url = `https://wa.me/${supportNumber}?text=${encodeURIComponent(supportMessage)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${supportNumber}?text=${encodeURIComponent(supportMessage)}`, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -44,7 +59,7 @@ export function GlobalSupport() {
               <X className="size-4" />
             </button>
             {notice.image_url && <img src={notice.image_url} alt="Aviso global" className="max-h-80 w-full object-cover" />}
-            {notice.text && <div className="px-5 py-4 text-sm font-medium text-foreground whitespace-pre-wrap">{notice.text}</div>}
+            {notice.text && <div className="whitespace-pre-wrap px-5 py-4 text-sm font-medium text-foreground">{notice.text}</div>}
           </div>
         </div>
       )}
