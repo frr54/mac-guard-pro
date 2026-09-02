@@ -11,7 +11,6 @@ create table if not exists public.system_settings (
 
 alter table public.system_settings enable row level security;
 
--- Public clients may read the singleton settings row.
 drop policy if exists "system_settings_public_read" on public.system_settings;
 create policy "system_settings_public_read"
 on public.system_settings
@@ -19,7 +18,6 @@ for select
 to anon, authenticated
 using (true);
 
--- Only the Master Admin may create/update/delete settings.
 drop policy if exists "system_settings_master_insert" on public.system_settings;
 create policy "system_settings_master_insert"
 on public.system_settings
@@ -46,12 +44,10 @@ insert into public.system_settings (id)
 select gen_random_uuid()
 where not exists (select 1 from public.system_settings);
 
--- Public Storage bucket for notice/banner images.
 insert into storage.buckets (id, name, public)
 values ('notices', 'notices', true)
 on conflict (id) do update set public = excluded.public;
 
--- Anyone can view notice images because the bucket is public.
 drop policy if exists "notices_public_read" on storage.objects;
 create policy "notices_public_read"
 on storage.objects
@@ -59,7 +55,6 @@ for select
 to public
 using (bucket_id = 'notices');
 
--- Only Master Admin can upload, update or delete notice images.
 drop policy if exists "notices_master_insert" on storage.objects;
 create policy "notices_master_insert"
 on storage.objects
@@ -81,3 +76,15 @@ on storage.objects
 for delete
 to authenticated
 using (bucket_id = 'notices' and public.is_master(auth.uid()));
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'system_settings'
+  ) then
+    alter publication supabase_realtime add table public.system_settings;
+  end if;
+end $$;
