@@ -29,6 +29,7 @@ function SettingsPage() {
   const [message, setMessage] = useState("Olá, preciso de suporte com meu acesso.");
   const [noticeText, setNoticeText] = useState("");
   const [noticeImageUrl, setNoticeImageUrl] = useState("");
+  const [noticePreview, setNoticePreview] = useState("");
   const [noticeActive, setNoticeActive] = useState(false);
   const [savingSupport, setSavingSupport] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -54,6 +55,20 @@ function SettingsPage() {
     setNoticeText(row.global_notice_text ?? "");
     setNoticeImageUrl(row.global_notice_image_url ?? "");
     setNoticeActive(!!row.global_notice_active);
+    await refreshPreview(row.global_notice_image_url ?? "");
+  }
+
+  async function refreshPreview(value: string) {
+    if (!value) {
+      setNoticePreview("");
+      return;
+    }
+    if (value.startsWith("http")) {
+      setNoticePreview(value);
+      return;
+    }
+    const { data } = await supabase.storage.from("notices").createSignedUrl(value, 3600);
+    setNoticePreview(data?.signedUrl ?? "");
   }
 
   async function saveSupport() {
@@ -88,8 +103,8 @@ function SettingsPage() {
       toast.error("Falha no upload da imagem.");
       return;
     }
-    const { data } = supabase.storage.from("notices").getPublicUrl(path);
-    setNoticeImageUrl(data.publicUrl);
+    setNoticeImageUrl(path);
+    await refreshPreview(path);
     setUploading(false);
     toast.success("Imagem carregada. Clique em Publicar Aviso Geral para salvar.");
   }
@@ -164,10 +179,10 @@ function SettingsPage() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && void uploadNoticeImage(e.target.files[0])} disabled={uploading} />
             </label>
             {uploading && <p className="text-xs text-muted-foreground">Enviando imagem…</p>}
-            {noticeImageUrl && (
+            {noticePreview && (
               <div className="relative overflow-hidden rounded-xl border border-border/70 bg-muted/20">
-                <img src={noticeImageUrl} alt="Prévia do aviso" className="max-h-72 w-full object-cover" />
-                <Button type="button" variant="secondary" size="icon" className="absolute right-2 top-2" onClick={() => setNoticeImageUrl("")}><X className="size-4" /></Button>
+                <img src={noticePreview} alt="Prévia do aviso" className="max-h-72 w-full object-cover" />
+                <Button type="button" variant="secondary" size="icon" className="absolute right-2 top-2" onClick={() => { setNoticeImageUrl(""); setNoticePreview(""); }}><X className="size-4" /></Button>
               </div>
             )}
           </div>

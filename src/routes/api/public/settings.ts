@@ -21,6 +21,13 @@ export const Route = createFileRoute("/api/public/settings")({
           );
         }
 
+        const rawImage = data?.global_notice_image_url ?? "";
+        let imageUrl = rawImage;
+        if (rawImage && !rawImage.startsWith("http")) {
+          const signed = await supabaseAdmin.storage.from("notices").createSignedUrl(rawImage, 60 * 60);
+          imageUrl = signed.data?.signedUrl ?? "";
+        }
+
         return Response.json({
           support: {
             whatsapp: data?.support_whatsapp ?? "",
@@ -29,7 +36,7 @@ export const Route = createFileRoute("/api/public/settings")({
           global_notice: {
             active: data?.global_notice_active ?? false,
             text: data?.global_notice_text ?? "",
-            image_url: data?.global_notice_image_url ?? "",
+            image_url: imageUrl,
           },
         });
       },
