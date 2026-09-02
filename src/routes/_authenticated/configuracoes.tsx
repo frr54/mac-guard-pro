@@ -29,6 +29,7 @@ function SettingsPage() {
   const [message, setMessage] = useState("Olá, preciso de suporte com meu acesso.");
   const [noticeText, setNoticeText] = useState("");
   const [noticeImageUrl, setNoticeImageUrl] = useState("");
+  const [noticePreview, setNoticePreview] = useState("");
   const [noticeActive, setNoticeActive] = useState(false);
   const [savingSupport, setSavingSupport] = useState(false);
   const [publishing, setPublishing] = useState(false);
