@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated")({
 function Layout() {
   const { access } = useAccess();
   return (
-    <AppShell canSeeResellers={!!access?.canCreateResellers}>
+    <AppShell canSeeResellers={!!access?.canCreateResellers} isMaster={!!access?.isMaster}>
       <Outlet />
     </AppShell>
   );
