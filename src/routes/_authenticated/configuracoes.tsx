@@ -88,8 +88,8 @@ function SettingsPage() {
       toast.error("Falha no upload da imagem.");
       return;
     }
-    const { data } = supabase.storage.from("notices").getPublicUrl(path);
-    setNoticeImageUrl(data.publicUrl);
+    setNoticeImageUrl(path);
+    await refreshPreview(path);
     setUploading(false);
     toast.success("Imagem carregada. Clique em Publicar Aviso Geral para salvar.");
   }
